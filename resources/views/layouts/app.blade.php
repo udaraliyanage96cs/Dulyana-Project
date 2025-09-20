@@ -245,7 +245,7 @@
         }
         
         .page-title {
-            font-size: 1.75rem;
+            font-size: 20px;
             font-weight: 600;
             margin-bottom: 0.5rem;
         }
@@ -276,6 +276,15 @@
                     Dashboard
                 </a>
             </div>
+
+            <div class="nav-item">
+                <a href="{{ route('branches') }}" class="nav-link {{ request()->routeIs('branches*') ? 'active' : '' }}">
+                    <i class="bi bi-geo-alt"></i>
+                    Branches
+                </a>    
+            </div>
+
+
             
             
             <hr class="my-3" style="border-color: var(--sidebar-hover);">
@@ -307,6 +316,7 @@
                     <div>
                         <h5 class="mb-0">@yield('page-title', 'Dashboard')</h5>
                     </div>
+
                 </div>
                 
                 <div class="d-flex align-items-center">
@@ -337,7 +347,17 @@
 
         <!-- Page Content -->
         <div class="content-wrapper">
-            @yield('breadcrumbs')
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+                
             @yield('content')
         </div>
     </div>
