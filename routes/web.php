@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\CommitteeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,4 +27,14 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{id}', [BranchController::class, 'update'])->name('branches.update');
         Route::delete('/{id}', [BranchController::class, 'destroy'])->name('branches.destroy');
     });
+
+    Route::prefix('committees')->group(function() {
+        Route::get('/', [CommitteeController::class, 'index'])->name('committees');
+        Route::get('/create', [CommitteeController::class, 'create'])->name('committees.create');
+        Route::post('/', [CommitteeController::class, 'store'])->name('committees.store');
+        Route::get('/edit/{id}', [CommitteeController::class, 'edit'])->name('committees.edit');
+        Route::put('/{id}', [CommitteeController::class, 'update'])->name('committees.update');
+        Route::delete('/{id}', [CommitteeController::class, 'destroy'])->name('committees.destroy');
+    });
+
 });

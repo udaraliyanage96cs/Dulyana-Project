@@ -38,7 +38,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <label for="district_id" class="form-label">District</label>
-                                <select class="form-select" id="district_id" name="district_id" required>
+                                <select class="form-select" id="district_id" name="district_id" required disabled>
                                     <option value="" disabled selected>Select District</option>
                                     @foreach ($districts as $district)
                                         <option value="{{ $district->id }}"
