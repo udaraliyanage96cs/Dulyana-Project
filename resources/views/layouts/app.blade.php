@@ -298,13 +298,13 @@
                 </a>    
             </div>
 
+            <div class="nav-item">
+                <a href="{{ route('events') }}" class="nav-link {{ request()->routeIs('events*') ? 'active' : '' }}">
+                    <i class="bi bi-calendar-event"></i>
+                    Events
+                </a>    
+            </div>
 
-            
-
-            
-
-
-            
             
             <hr class="my-3" style="border-color: var(--sidebar-hover);">
             

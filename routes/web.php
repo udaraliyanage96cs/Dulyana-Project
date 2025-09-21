@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CommitteeController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EventsController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -46,5 +47,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/edit/{id}', [CourseController::class, 'edit'])->name('courses.edit');
         Route::put('/update/{id}', [CourseController::class, 'update'])->name('courses.update');
         Route::delete('/{id}', [CourseController::class, 'destroy'])->name('courses.destroy');
+    });
+
+    Route::prefix('events')->group(function() {
+        Route::get('/', [EventsController::class, 'index'])->name('events');
+        Route::get('/create', [EventsController::class, 'create'])->name('events.create');
+        Route::post('/', [EventsController::class, 'store'])->name('events.store');
+        Route::get('/edit/{id}', [EventsController::class, 'edit'])->name('events.edit');
+        Route::put('/update/{id}', [EventsController::class, 'update'])->name('events.update');
+        Route::delete('/{id}', [EventsController::class, 'destroy'])->name('events.destroy');
     });
 });

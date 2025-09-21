@@ -1,12 +1,12 @@
 {{-- resources/views/dashboard.blade.php --}}
 @extends('layouts.app')
 @section('title', 'Dashboard - ' . config('app.name'))
-@section('page-title', 'Branches')
+@section('page-title', 'Events')
 
 @section('content')
     <!-- Page Header -->
     <div class="mb-4">
-        <h1 class="page-title">All Branches</h1>
+        <h1 class="page-title">All Events</h1>
     </div>
 
     <!-- Statistics Cards -->
@@ -14,45 +14,53 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Branches List</h5>
-                    <a href="{{ route('branches.create') }}" class="btn btn-primary btn-sm">Add New Branch</a>
+                    <h5 class="mb-0">Events List</h5>
+                    <a href="{{ route('events.create') }}" class="btn btn-primary btn-sm">Add New Event</a>
                 </div>
                 <div class="card-body">
                     <table class="table">
                         <thead class="table-dark">
                             <tr>
                                 <th>#</th>
-                                <th>Branch Name</th>
-                                <th>District</th>
-                                <th>Zone</th>
+                                <th>Event Title</th>
+                                <th>Description</th>
+                                <th>Event Date</th>
+                                <th>Event Time</th>
                                 <th>Status</th>
+                                <th>Branch</th>
+                                <th>Created By</th>
+                                <th>Updated By</th>
                                 <th style="display: flex;justify-content:end;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($branches as $branch)
+                            @foreach ($events as $event)
                                 <tr>
-                                    <td>{{ $branch->id }}</td>
-                                    <td>{{ $branch->name }}</td>
-                                    <td>{{ $branch->zone?->district?->name }}</td>
-                                    <td>{{ $branch->zone?->name }}</td>
-                                    <td>{{ ucfirst($branch->status) }}</td>
+                                    <td>{{ $event->id }}</td>
+                                    <td>{{ $event->title }}</td>
+                                    <td>{{ $event->description }}</td>
+                                    <td>{{ $event->event_date }}</td>
+                                    <td>{{ $event->event_time ?? "N/A" }}</td>
+                                    <td>{{ ucfirst($event->status) }}</td>
+                                    <td>{{ $event->branch?->name }}</td>
+                                    <td>{{ $event->creator?->name }}</td>
+                                    <td>{{ $event->updator?->name ?? "N/A" }}</td>
                                     <td style="display: flex;justify-content:end">
-                                        <a href="{{ route('branches.edit', $branch->id) }}"
+                                        <a href="{{ route('events.edit', $event->id) }}"
                                             class="btn btn-sm btn-warning">Edit</a>
-                                        <form action="{{ route('branches.destroy', $branch->id) }}" method="POST"
+                                        <form action="{{ route('events.destroy', $event->id) }}" method="POST"
                                             style="display:inline-block; margin-left:5px;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure you want to delete this branch?')">Delete</button>
+                                                onclick="return confirm('Are you sure you want to delete this event?')">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
                             @endforeach
-                            @if ($branches->isEmpty())
+                            @if ($events->isEmpty())
                                 <tr>
-                                    <td colspan="5" class="text-center">No data found</td>
+                                    <td colspan="10" class="text-center">No data found</td>
                                 </tr>
                             @endif
                         </tbody>
