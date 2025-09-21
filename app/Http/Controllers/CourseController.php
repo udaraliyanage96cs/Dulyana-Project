@@ -4,21 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use App\Models\Committee;
-use App\Models\Branch;
+use App\Models\Course;
 
-class CommitteeController extends Controller
+class CourseController extends Controller
 {
     public function index()
     {
-        $committees = Committee::orderBy('id', 'desc')->with('branch')->get();
-        return view('committees.index', compact('committees'));
+        $courses = Course::orderBy('id', 'desc')->get();
+        return view('courses.index', compact('courses'));
     }
 
     public function create()
     {
-        $branches = Branch::all();
-        return view('committees.create', compact('branches'));
+        return view('courses.create');
     }
 
     public function store(Request $request)
@@ -26,24 +24,28 @@ class CommitteeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'branch_id' => 'required|exists:branches,id',
+            'provider' => 'required|string|unique:courses,provider',
+            'duration_hours' => 'nullable|string',
+            'color_code' => 'nullable|string',
             'status' => 'required|in:active,inactive',
         ]);
 
         try {
             DB::beginTransaction();
 
-            Committee::create([
+            Course::create([
                 'name' => $request->name,
                 'description' => $request->description,
-                'branch_id' => $request->branch_id,
+                'provider' => $request->provider,
+                'duration_hours' => $request->duration_hours,
+                'color_code' => $request->color_code,
                 'status' => $request->status,
                 'created_by' => auth()->user()->id
             ]);
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Committee created successfully.');
+            return redirect()->back()->with('success', 'Course created successfully.');
 
         } catch (\Exception $e) {
 
@@ -55,9 +57,8 @@ class CommitteeController extends Controller
 
     public function edit($id)
     {
-        $branches = Branch::all();
-        $committee = Committee::findOrFail($id);
-        return view('committees.edit', compact('branches', 'committee'));
+        $course = Course::findOrFail($id);
+        return view('courses.edit', compact('course'));
     }
 
     public function update(Request $request, $id)
@@ -65,24 +66,29 @@ class CommitteeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'branch_id' => 'required|exists:branches,id',
+            'provider' => 'required|string|unique:courses,provider,'.$id,
+            'duration_hours' => 'nullable|string',
+            'color_code' => 'nullable|string',
             'status' => 'required|in:active,inactive',
         ]);
+
         try {
             DB::beginTransaction();
 
-            $committee = Committee::findOrFail($id);
-            $committee->update([
+            $course = Course::findOrFail($id);
+            $course->update([
                 'name' => $request->name,
                 'description' => $request->description,
-                'branch_id' => $request->branch_id,
+                'provider' => $request->provider,
+                'duration_hours' => $request->duration_hours,
+                'color_code' => $request->color_code,
                 'status' => $request->status,
                 'updated_by' => auth()->user()->id
             ]);
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Committee updated successfully.');
+            return redirect()->back()->with('success', 'Course updated successfully.');
 
         } catch (\Exception $e) {
 
@@ -90,19 +96,20 @@ class CommitteeController extends Controller
 
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
-        }
+    }
 
     public function destroy($id)
     {
         try {
             DB::beginTransaction();
-            $committee = Committee::findOrFail($id);
-            $committee->delete();
+            $course = Course::findOrFail($id);
+            $course->delete();
             DB::commit();
-            return redirect()->back()->with('success', 'Committee deleted successfully.');
+            return redirect()->back()->with('success', 'Course deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
+
 }

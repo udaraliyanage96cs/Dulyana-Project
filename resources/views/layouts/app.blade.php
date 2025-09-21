@@ -291,6 +291,16 @@
                 </a>    
             </div>
 
+            <div class="nav-item">
+                <a href="{{ route('courses') }}" class="nav-link {{ request()->routeIs('courses*') ? 'active' : '' }}">
+                    <i class="bi bi-journal-bookmark"></i>
+                    Courses
+                </a>    
+            </div>
+
+
+            
+
             
 
 

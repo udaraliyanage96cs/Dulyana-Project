@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CommitteeController;
+use App\Http\Controllers\CourseController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -37,4 +38,13 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}', [CommitteeController::class, 'destroy'])->name('committees.destroy');
     });
 
+
+    Route::prefix('courses')->group(function() {
+        Route::get('/', [CourseController::class, 'index'])->name('courses');
+        Route::get('/create', [CourseController::class, 'create'])->name('courses.create');
+        Route::post('/', [CourseController::class, 'store'])->name('courses.store');
+        Route::get('/edit/{id}', [CourseController::class, 'edit'])->name('courses.edit');
+        Route::put('/update/{id}', [CourseController::class, 'update'])->name('courses.update');
+        Route::delete('/{id}', [CourseController::class, 'destroy'])->name('courses.destroy');
+    });
 });
