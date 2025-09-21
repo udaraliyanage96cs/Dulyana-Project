@@ -287,7 +287,7 @@
             <div class="nav-item">
                 <a href="{{ route('committees') }}" class="nav-link {{ request()->routeIs('committees*') ? 'active' : '' }}">
                     <i class="bi bi-people"></i>
-                    committees
+                    Committees
                 </a>    
             </div>
 
