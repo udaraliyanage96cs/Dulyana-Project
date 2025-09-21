@@ -4,11 +4,6 @@
 @section('page-title', 'Committees')
 
 @section('content')
-    <!-- Page Header -->
-    <div class="mb-4">
-        <h1 class="page-title">Create A Committee</h1>
-    </div>
-
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">

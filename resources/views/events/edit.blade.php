@@ -4,11 +4,6 @@
 @section('page-title', 'Events')
 
 @section('content')
-    <!-- Page Header -->
-    <div class="mb-4">
-        <h1 class="page-title">Update Events</h1>
-    </div>
-
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">

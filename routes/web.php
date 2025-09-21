@@ -7,8 +7,12 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\CommitteeController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EventsController;
+use App\Http\Controllers\MemberController;
 
 Route::get('/', function () {
+    if(auth()->check()) {
+        return redirect('/dashboard');
+    }
     return view('welcome');
 });
 
@@ -56,5 +60,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/edit/{id}', [EventsController::class, 'edit'])->name('events.edit');
         Route::put('/update/{id}', [EventsController::class, 'update'])->name('events.update');
         Route::delete('/{id}', [EventsController::class, 'destroy'])->name('events.destroy');
+    });
+
+    Route::prefix('members')->group(function() {
+        Route::get('/', [MemberController::class, 'index'])->name('members');
+        Route::get('/create', [MemberController::class, 'create'])->name('members.create');
+        Route::post('/', [MemberController::class, 'store'])->name('members.store');
+        Route::get('/edit/{id}', [MemberController::class, 'edit'])->name('members.edit');
+        Route::put('/update/{id}', [MemberController::class, 'update'])->name('members.update');
+        Route::delete('/{id}', [MemberController::class, 'destroy'])->name('members.destroy');
+
+        Route::get('/remove-course/{memberId}/{courseId}', [MemberController::class, 'removeCourse'])->name('members.removeCourse');
+        Route::get('/{id}', [MemberController::class, 'show'])->name('members.show');
     });
 });

@@ -4,11 +4,6 @@
 @section('page-title', 'Branches')
 
 @section('content')
-    <!-- Page Header -->
-    <div class="mb-4">
-        <h1 class="page-title">Update Branche</h1>
-    </div>
-
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
