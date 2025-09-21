@@ -26,8 +26,7 @@
                             {{ $member->state ? ', ' . $member->state : '' }}<br/>
                             {{ $member->postal_code ? ' ' . $member->postal_code : '' }}
                         </li>
-                        <li class="list-group-item"><strong>Created By:</strong> {{ $member->creator?->name }}</li>
-                        <li class="list-group-item"><strong>Updated By:</strong> {{ $member->updator?->name ?? 'N/A' }}</li>
+                       
                         <li class="list-group-item"><strong>Assigned Courses:</strong>
                             @if($member->memberCourses->isEmpty())
                                 <p>No courses assigned.</p>
@@ -45,6 +44,25 @@
                                 </ul>
                             @endif
                         </li>
+
+                        <li class="list-group-item"><strong>Assigned Branches:</strong>
+                            @if($member->memberBranches->isEmpty())
+                                <p>No branches assigned.</p>
+                            @else
+                                <ul>
+                                    @foreach($member->memberBranches as $memberBranch)
+                                        <li>
+                                            {{ $memberBranch->branch->name }} 
+                                            (From: {{ $memberBranch->start_date ? \Carbon\Carbon::parse($memberBranch->start_date)->format('M d, Y') : 'N/A' }} 
+                                            To: {{ $memberBranch->end_date ? \Carbon\Carbon::parse($memberBranch->end_date)->format('M d, Y') : 'N/A' }}) 
+                                            - {{ $memberBranch->is_current === 'yes' ? 'Current' : 'Not Current' }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </li>
+                        <li class="list-group-item"><strong>Created By:</strong> {{ $member->creator?->name }}</li>
+                        <li class="list-group-item"><strong>Updated By:</strong> {{ $member->updator?->name ?? 'N/A' }}</li>
                     </ul>
                 </div>
             </div>

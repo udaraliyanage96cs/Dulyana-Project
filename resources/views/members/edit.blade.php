@@ -118,7 +118,8 @@
                                             <div class="row g-2 course-item mb-3">
                                                 <div class="col-md-5">
                                                     <label class="form-label">Assign Course</label>
-                                                    <select class="form-control" name="courses[{{ $index }}][course_id]" required>
+                                                    <select class="form-control"
+                                                        name="courses[{{ $index }}][course_id]" required>
                                                         <option value="" disabled selected>Select course</option>
                                                         @foreach ($courses as $course)
                                                             <option value="{{ $course->id }}"
@@ -151,14 +152,15 @@
                                     </div>
                                 </div>
                                 @php
-                                    $nextIndex = $member->memberCourses->count() + 1;
+                                    $nextIndexCourses = $member->memberCourses->count() + 1;
                                 @endphp
                                 <div class="mb-3">
                                     <div id="courses-wrapper">
                                         <div class="row g-2 course-item">
                                             <div class="col-md-5">
                                                 <label class="form-label">Assign Course</label>
-                                                <select class="form-control" name="courses[{{$nextIndex}}][course_id]">
+                                                <select class="form-control"
+                                                    name="courses[{{ $nextIndexCourses }}][course_id]">
                                                     <option value="" disabled selected>Select course</option>
                                                     @foreach ($courses as $course)
                                                         <option value="{{ $course->id }}">{{ $course->name }}</option>
@@ -167,16 +169,122 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="form-label" for="date">Enrollment Date</label>
-                                                <input type="date" name="courses[{{$nextIndex}}][enrollment_date]"
+                                                <input type="date"
+                                                    name="courses[{{ $nextIndexCourses }}][enrollment_date]"
                                                     class="form-control">
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="form-label" for="date">Completion Date</label>
-                                                <input type="date" name="courses[{{$nextIndex}}][completion_date]"
+                                                <input type="date"
+                                                    name="courses[{{ $nextIndexCourses }}][completion_date]"
                                                     class="form-control">
                                             </div>
                                             <div class="col-md-1 d-flex align-items-end justify-content-end">
                                                 <button type="button" class="btn btn-success add-course">Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Branch Assignments</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div>
+                                        @foreach ($member->memberBranches as $index => $memberBranch)
+                                            <div class="row g-2 course-item mb-3">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Assign Branch</label>
+                                                    <select class="form-control"
+                                                        name="branches[{{ $index }}][branch_id]" required>
+                                                        <option value="" disabled selected>Select branch</option>
+                                                        @foreach ($branches as $branch)
+                                                            <option value="{{ $branch->id }}"
+                                                                @selected($branch->id == $memberBranch->branch_id)>{{ $branch->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label" for="date">Start Date</label>
+                                                    <input type="date"
+                                                        name="branches[{{ $index }}][start_date]"
+                                                        class="form-control" value="{{ $memberBranch->start_date }}">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label" for="date">End Date</label>
+                                                    <input type="date" name="branches[{{ $index }}][end_date]"
+                                                        value="{{ $memberBranch->end_date }}" class="form-control">
+                                                </div>
+
+                                                <div class="col-md-1 d-flex align-items-end justify-content-end">
+                                                    <div class="form-check">
+                                                        <input class="form-check" type="checkbox" value="yes"
+                                                            name="branches[{{ $index }}][is_current]"
+                                                            id="is_current_{{ $index }}"
+                                                            @if ($memberBranch->is_current === 'yes') checked @endif>
+                                                        <label class="form-checklabel"
+                                                            for="is_current_{{ $index }}">
+                                                            Current
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1 d-flex align-items-end justify-content-end">
+                                                    <a type="button"
+                                                        href="{{ route('members.removeBranch', ['memberId' => $member->id, 'branchId' => $memberBranch->id]) }}"
+                                                        class="btn btn-danger">Remove</a>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @php
+                                    $nextIndexBranches = $member->memberBranches->count() + 1;
+                                @endphp
+                                <div class="mb-3">
+                                    <div id="branches-wrapper">
+                                        <div class="row g-2 course-item">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Assign Branch</label>
+                                                <select class="form-control"
+                                                    name="branches[{{ $nextIndexBranches }}][branch_id]">
+                                                    <option value="" disabled selected>Select branch</option>
+                                                    @foreach ($branches as $branch)
+                                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label" for="date">Start Date</label>
+                                                <input type="date"
+                                                    name="branches[{{ $nextIndexBranches }}][start_date]"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label" for="date">End Date</label>
+                                                <input type="date" name="branches[{{ $nextIndexBranches }}][end_date]"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="col-md-1 d-flex align-items-end justify-content-end">
+                                                <div class="form-check">
+                                                    <input class="form-check" type="checkbox" value="yes"
+                                                        name="branches[{{ $nextIndexBranches }}][is_current]"
+                                                        id="is_current_{{ $nextIndexBranches }}">
+                                                    <label class="form-checklabel"
+                                                        for="is_current_{{ $nextIndexBranches }}">
+                                                        Current
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1 d-flex align-items-end justify-content-end">
+                                                <button type="button" class="btn btn-success add-branches">Add</button>
                                             </div>
                                         </div>
                                     </div>
@@ -206,36 +314,81 @@
 
 @push('scripts')
     <script>
-        let courseIndex = {{ $nextIndex }};
+        let courseIndex = {{ $nextIndexCourses }};
 
         $(document).on('click', '.add-course', function() {
             let newCourse = `
-        <div class="row g-2 course-item mt-2">
-            <div class="col-md-5">
-                <select class="form-control" name="courses[${courseIndex}][course_id]" required>
-                    <option value="" disabled selected>Select course</option>
-                    @foreach ($courses as $course)
-                        <option value="{{ $course->id }}">{{ $course->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3">
-                <input type="date" name="courses[${courseIndex}][enrollment_date]" class="form-control" required>
-            </div>
-            <div class="col-md-3">
-                <input type="date" name="courses[${courseIndex}][completion_date]" class="form-control">
-            </div>
-            <div class="col-md-1 d-flex align-items-end justify-content-end">
-                <button type="button" class="btn btn-danger remove-course"> Remove </button>
-            </div>
-        </div>`;
+                <div class="row g-2 course-item mt-2">
+                    <div class="col-md-5">
+                        <select class="form-control" name="courses[${courseIndex}][course_id]" required>
+                            <option value="" disabled selected>Select course</option>
+                            @foreach ($courses as $course)
+                                <option value="{{ $course->id }}">{{ $course->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" name="courses[${courseIndex}][enrollment_date]" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" name="courses[${courseIndex}][completion_date]" class="form-control">
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end justify-content-end">
+                        <button type="button" class="btn btn-danger remove-course"> Remove </button>
+                    </div>
+                </div>
+            `;
 
             $('#courses-wrapper').append(newCourse);
             courseIndex++;
         });
 
+
+        let branchIndex = {{ $nextIndexBranches }};
+        $(document).on('click', '.add-branches', function() {
+            let newBranch = `
+                    <div class="row g-2 course-item mt-2">
+                        <div class="col-md-4">
+                            <select class="form-control" name="branches[${branchIndex}][branch_id]" required>
+                                <option value="" disabled selected>Select branch</option>
+                                @foreach ($branches as $branch)
+                                    <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" name="branches[${branchIndex}][start_date]" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" name="branches[${branchIndex}][end_date]" class="form-control">
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end justify-content-end">
+                            <div class="form-check">
+                                <input class="form-check" type="checkbox" value="yes" name="branches[${branchIndex}][is_current]" id="is_current_${branchIndex}">
+                                <label class="form-checklabel" for="is_current_${branchIndex}">
+                                    Current
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end justify-content-end">
+                            <button type="button" class="btn btn-danger remove-branch"> Remove </button>
+                        </div>
+                    </div>
+            `;
+            $('#branches-wrapper').append(newBranch);
+            branchIndex++;
+        });
+
         $(document).on('click', '.remove-course', function() {
             $(this).closest('.course-item').remove();
+        });
+
+        $(document).on('click', '.remove-branch', function() {
+            $(this).closest('.course-item').remove();
+        });
+
+        $(document).on('change', 'input[type="checkbox"]', function() {
+            $('input[type="checkbox"]').not(this).prop('checked', false);
         });
     </script>
 @endpush

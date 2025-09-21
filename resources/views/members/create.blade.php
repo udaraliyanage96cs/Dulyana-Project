@@ -142,6 +142,49 @@
                             </div>
                         </div>
 
+                        <div class="card  mt-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Branch Assignments</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div id="branches-wrapper">
+                                        <div class="row g-2 course-item">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Assign Branch</label>
+                                                <select class="form-control" name="branches[0][branch_id]" required>
+                                                    <option value="" disabled selected>Select branch</option>
+                                                    @foreach ($branches as $branch)
+                                                        <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label" for="date">Start Date</label>
+                                                <input type="date" name="branches[0][start_date]"
+                                                    class="form-control" required>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label" for="date">End Date</label>
+                                                <input type="date" name="branches[0][end_date]"
+                                                    class="form-control">
+                                            </div>
+                                            <div class="col-md-3 d-flex align-items-end justify-content-end">
+                                                <div class="">
+                                                    <label class="form-label" for="date">Is Current Branch</label>
+                                                    <input type="checkbox" name="branches[0][is_current]"
+                                                    class="form-check" >
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1 d-flex align-items-end justify-content-end">
+                                                <button type="button" class="btn btn-success add-branches">Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="d-flex justify-content-end mt-3">
                             <button type="submit" class="btn btn-primary">Create Member</button>
                         </div>
@@ -165,35 +208,77 @@
 @push('scripts')
     <script>
         let courseIndex = 1;
+        let branchIndex = 1;
 
         $(document).on('click', '.add-course', function() {
             let newCourse = `
-        <div class="row g-2 course-item mt-2">
-            <div class="col-md-5">
-                <select class="form-control" name="courses[${courseIndex}][course_id]" required>
-                    <option value="" disabled selected>Select course</option>
-                    @foreach ($courses as $course)
-                        <option value="{{ $course->id }}">{{ $course->name }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-3">
-                <input type="date" name="courses[${courseIndex}][enrollment_date]" class="form-control" required>
-            </div>
-            <div class="col-md-3">
-                <input type="date" name="courses[${courseIndex}][completion_date]" class="form-control">
-            </div>
-            <div class="col-md-1 d-flex align-items-end justify-content-end">
-                <button type="button" class="btn btn-danger remove-course"> Remove </button>
-            </div>
-        </div>`;
-
+                    <div class="row g-2 course-item mt-2">
+                        <div class="col-md-5">
+                            <select class="form-control" name="courses[${courseIndex}][course_id]" required>
+                                <option value="" disabled selected>Select course</option>
+                                @foreach ($courses as $course)
+                                    <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" name="courses[${courseIndex}][enrollment_date]" class="form-control" required>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="date" name="courses[${courseIndex}][completion_date]" class="form-control">
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end justify-content-end">
+                            <button type="button" class="btn btn-danger remove-course"> Remove </button>
+                        </div>
+                    </div>
+                `;
             $('#courses-wrapper').append(newCourse);
             courseIndex++;
         });
 
+        $(document).on('click', '.add-branches', function() {
+            let newBranch = `
+                    <div class="row g-2 course-item mt-2">
+                        <div class="col-md-4">
+                            <select class="form-control" name="branches[${branchIndex}][branch_id]" required>
+                                <option value="" disabled selected>Select branch</option>
+                                @foreach ($branches as $branch)
+                                    <option value="{{ $branch->id }}">{{ $branch->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" name="branches[${branchIndex}][start_date]" class="form-control" required>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" name="branches[${branchIndex}][end_date]" class="form-control">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end justify-content-end">
+                            <div class="">
+                                <label class="form-label" for="date">Is Current Branch</label>
+                                <input type="checkbox" name="branches[${branchIndex}][is_current]"
+                                class="form-check" >
+                            </div>
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end justify-content-end">
+                            <button type="button" class="btn btn-danger remove-course"> Remove </button>
+                        </div>
+                    </div>
+                `;
+            $('#branches-wrapper').append(newBranch);
+            branchIndex++;
+        });
+
         $(document).on('click', '.remove-course', function() {
             $(this).closest('.course-item').remove();
+        });
+
+        $(document).on('click', '.remove-branches', function() {
+            $(this).closest('.course-item').remove();
+        });
+
+        $(document).on('change', 'input[type="checkbox"]', function() {
+            $('input[type="checkbox"]').not(this).prop('checked', false);
         });
     </script>
 @endpush

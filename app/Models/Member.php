@@ -26,4 +26,9 @@ class Member extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function memberBranches()
+    {
+        return $this->hasMany(MemberBranch::class);
+    }
 }
