@@ -73,5 +73,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/remove-course/{memberId}/{courseId}', [MemberController::class, 'removeCourse'])->name('members.removeCourse');
         Route::get('/{id}', [MemberController::class, 'show'])->name('members.show');
         Route::get('/remove-branch/{memberId}/{branchId}', [MemberController::class, 'removeBranch'])->name('members.removeBranch');
+        Route::get('/card/{memberId}/{courseId}', [MemberController::class, 'card'])->name('members.card');
+        Route::post('/card/{memberId}/{courseId}', [MemberController::class, 'card_update'])->name('members.card_update');
     });
 });

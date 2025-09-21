@@ -115,7 +115,7 @@ class MemberController extends Controller
 
     public function edit($id)
     {
-        $member = Member::with('memberCourses','memberBranches')->findOrFail($id);
+        $member = Member::with('memberCourses.course','memberBranches')->findOrFail($id);
         $courses = Course::where('status', 'active')->get();
         $branches = Branch::where('status', 'active')->get();
         return view('members.edit', compact('member', 'courses', 'branches'));
@@ -157,8 +157,8 @@ class MemberController extends Controller
             MemberCourse::where('member_id', $member->id)->delete();
             if ($request->has('courses')) {
                 $request->validate([
-                    'courses.*.course_id' => 'required|exists:courses,id',
-                    'courses.*.enrollment_date' => 'required|date',
+                    'courses.*.course_id' => 'nullable|exists:courses,id',
+                    'courses.*.enrollment_date' => 'nullable|date',
                     'courses.*.completion_date' => 'nullable|date|after_or_equal:courses.*.enrollment_date',
                 ],[
                     'courses.*.course_id.required' => 'The course field is required.',
@@ -185,7 +185,7 @@ class MemberController extends Controller
             MemberBranch::where('member_id', $member->id)->delete();
             if( $request->has('branches')) {
                 $request->validate([
-                    'branches.*.branch_id' => 'required|exists:branches,id',
+                    'branches.*.branch_id' => 'nullable|exists:branches,id',
                     'branches.*.start_date' => 'nullable|date',
                     'branches.*.end_date' => 'nullable|date|after_or_equal:branches.*.start_date',
                 ],[
@@ -259,6 +259,38 @@ class MemberController extends Controller
         try {
             $memberBranch->delete();
             return redirect()->back()->with('success', 'Branch removed from member successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+    }
+
+    public function card($memberId, $courseId)
+    {
+        $member = Member::findOrFail($memberId);
+        $memberCourse = MemberCourse::with('course')->where('member_id', $member->id) ->where('id', $courseId)->firstOrFail();
+        return view('members.card', compact('member', 'memberCourse'));
+    }
+
+    public function card_update(Request $request, $memberId, $courseId)
+    {
+        $member = Member::findOrFail($memberId);
+        $memberCourse = MemberCourse::where('member_id', $member->id) ->where('id', $courseId)->firstOrFail();
+
+        $request->validate([
+            'card_number' => 'required|string|max:50|unique:member_courses,card_number,' . $memberCourse->id,
+            'issue_date' => 'required|date',
+            'expiry_date' => 'required|date|after:issue_date',
+        ]);
+
+        try {
+            $memberCourse->update([
+                'card_number' => $request->card_number,
+                'issue_date' => $request->issue_date,
+                'expiry_date' => $request->expiry_date,
+                'updated_by' => auth()->user()->id
+            ]);
+
+            return redirect()->back()->with('success', 'Card details updated successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }

@@ -115,8 +115,10 @@
                                 <div class="mb-3">
                                     <div>
                                         @foreach ($member->memberCourses as $index => $memberCourse)
+                                        
+
                                             <div class="row g-2 course-item mb-3">
-                                                <div class="col-md-5">
+                                                <div class="col-md-4">
                                                     <label class="form-label">Assign Course</label>
                                                     <select class="form-control"
                                                         name="courses[{{ $index }}][course_id]" required>
@@ -142,7 +144,11 @@
                                                         value="{{ $memberCourse->completion_date }}"
                                                         class="form-control">
                                                 </div>
-                                                <div class="col-md-1 d-flex align-items-end justify-content-end">
+                                                <div class="col-md-2 d-flex align-items-end justify-content-end">
+                                                    @if($memberCourse->completion_date)
+                                                        <a href="{{route('members.card',[$member->id,$memberCourse->id])}}" class="btn btn-info" style="margin-right: 5px">Card
+                                                        </a>
+                                                    @endif
                                                     <a type="button"
                                                         href="{{ route('members.removeCourse', ['memberId' => $member->id, 'courseId' => $memberCourse->id]) }}"
                                                         class="btn btn-danger">Remove</a>
@@ -157,7 +163,7 @@
                                 <div class="mb-3">
                                     <div id="courses-wrapper">
                                         <div class="row g-2 course-item">
-                                            <div class="col-md-5">
+                                            <div class="col-md-4">
                                                 <label class="form-label">Assign Course</label>
                                                 <select class="form-control"
                                                     name="courses[{{ $nextIndexCourses }}][course_id]">
@@ -179,7 +185,7 @@
                                                     name="courses[{{ $nextIndexCourses }}][completion_date]"
                                                     class="form-control">
                                             </div>
-                                            <div class="col-md-1 d-flex align-items-end justify-content-end">
+                                            <div class="col-md-2 d-flex align-items-end justify-content-end">
                                                 <button type="button" class="btn btn-success add-course">Add</button>
                                             </div>
                                         </div>
@@ -319,7 +325,7 @@
         $(document).on('click', '.add-course', function() {
             let newCourse = `
                 <div class="row g-2 course-item mt-2">
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <select class="form-control" name="courses[${courseIndex}][course_id]" required>
                             <option value="" disabled selected>Select course</option>
                             @foreach ($courses as $course)
@@ -333,7 +339,7 @@
                     <div class="col-md-3">
                         <input type="date" name="courses[${courseIndex}][completion_date]" class="form-control">
                     </div>
-                    <div class="col-md-1 d-flex align-items-end justify-content-end">
+                    <div class="col-md-2 d-flex align-items-end justify-content-end">
                         <button type="button" class="btn btn-danger remove-course"> Remove </button>
                     </div>
                 </div>

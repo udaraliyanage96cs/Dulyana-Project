@@ -33,12 +33,18 @@
                             @else
                                 <ul>
                                     @foreach($member->memberCourses as $memberCourse)
-                                        <li>
-                                        
-
-                                            {{ $memberCourse->course->name }} (Enrolled on: {{ $memberCourse->created_at->format('Y-m-d') }}) -
-                                            {{ $memberCourse->completion_date ? 'Completed on ' . \Carbon\Carbon::parse($memberCourse->completion_date)->format('M d, Y') : 'Not Completed' }}
-                                           
+                                        <li class="mb-3">
+                                            <div class="">
+                                                {{ $memberCourse->course->name }} (Enrolled on: {{ $memberCourse->created_at->format('Y-m-d') }}) -
+                                                {{ $memberCourse->completion_date ? 'Completed on ' . \Carbon\Carbon::parse($memberCourse->completion_date)->format('M d, Y') : 'Not Completed Yet' }}
+                                            </div>
+                                            @if($memberCourse->status == 'completed')
+                                                <div class="">
+                                                    Card Number: {{ $memberCourse->card_number ?? 'N/A' }} <br/>
+                                                    Issue Date: {{ $memberCourse->issue_date ? \Carbon\Carbon::parse($memberCourse->issue_date)->format('M d, Y') : 'N/A' }} <br/>
+                                                    Expiry Date: {{ $memberCourse->expiry_date ? \Carbon\Carbon::parse($memberCourse->expiry_date)->format('M d, Y') : 'N/A' }} <br/>
+                                                </div>
+                                            @endif
                                         </li>
                                     @endforeach
                                 </ul>
@@ -55,7 +61,7 @@
                                             {{ $memberBranch->branch->name }} 
                                             (From: {{ $memberBranch->start_date ? \Carbon\Carbon::parse($memberBranch->start_date)->format('M d, Y') : 'N/A' }} 
                                             To: {{ $memberBranch->end_date ? \Carbon\Carbon::parse($memberBranch->end_date)->format('M d, Y') : 'N/A' }}) 
-                                            - {{ $memberBranch->is_current === 'yes' ? 'Current' : 'Not Current' }}
+                                            <strong>{{ $memberBranch->is_current === 'yes' ? 'Current' : '' }}</strong>
                                         </li>
                                     @endforeach
                                 </ul>
@@ -64,6 +70,10 @@
                         <li class="list-group-item"><strong>Created By:</strong> {{ $member->creator?->name }}</li>
                         <li class="list-group-item"><strong>Updated By:</strong> {{ $member->updator?->name ?? 'N/A' }}</li>
                     </ul>
+
+                    <div class="mt-4 text-end">
+                        <a href="{{ route('members.edit', $member->id) }}" class="btn btn-primary">Edit Member</a>
+                    </div>
                 </div>
             </div>
         </div>
