@@ -12,13 +12,63 @@ use App\Models\Branch;
 use App\Models\Committee;
 use App\Models\CommitteeRole;
 use App\Models\MemberCommittee;
+use App\Models\User;
 
 class MemberController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $members = Member::orderBy('id', 'desc')->get();
-        return view('members.index', compact('members'));
+        $query = Member::with(['creator', 'updator']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('member_id', 'like', '%' . $search . '%')
+                ->orWhere('first_name', 'like', '%' . $search . '%')
+                ->orWhere('last_name', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%')
+                ->orWhere('phone', 'like', '%' . $search . '%');
+                $q->orWhereRaw("(first_name || ' ' || last_name) like ?", ['%' . $search . '%']);
+            });
+        }
+
+        if ($request->filled('city')) {
+            $query->where('city', 'like', '%' . $request->city . '%');
+        }
+
+        if ($request->filled('state')) {
+            $query->where('state', 'like', '%' . $request->state . '%');
+        }
+
+        if ($request->filled('created_by')) {
+            $query->where('created_by', $request->created_by);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $sortBy = $request->get('sort_by', 'id');
+        $sortOrder = $request->get('sort_order', 'desc');
+        
+        $allowedSortFields = ['id', 'member_id', 'first_name', 'last_name', 'email', 'created_at'];
+        if (in_array($sortBy, $allowedSortFields)) {
+            $query->orderBy($sortBy, $sortOrder);
+        } else {
+            $query->orderBy('id', 'desc');
+        }
+
+        $members = $query->get();
+
+        $cities = Member::whereNotNull('city')->distinct()->pluck('city')->filter()->sort();
+        $states = Member::whereNotNull('state')->distinct()->pluck('state')->filter()->sort();
+        $creators = User::whereIn('id', Member::whereNotNull('created_by')->distinct()->pluck('created_by'))->get();
+
+        return view('members.index', compact('members', 'cities', 'states', 'creators'));
     }
 
     public function create()
