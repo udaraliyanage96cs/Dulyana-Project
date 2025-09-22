@@ -32,8 +32,9 @@
                                     <td>{{ $branch->zone?->name }}</td>
                                     <td>{{ ucfirst($branch->status) }}</td>
                                     <td style="display: flex;justify-content:end">
+                                        <a href="{{ route('branches.statistical-report', $branch->id) }}" class="btn btn-sm btn-success">Report</a>
                                         <a href="{{ route('branches.edit', $branch->id) }}"
-                                            class="btn btn-sm btn-warning">Edit</a>
+                                            class="btn btn-sm btn-warning" style="margin-left:5px;">Edit</a>
                                         <form action="{{ route('branches.destroy', $branch->id) }}" method="POST"
                                             style="display:inline-block; margin-left:5px;">
                                             @csrf

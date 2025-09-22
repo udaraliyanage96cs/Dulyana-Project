@@ -32,6 +32,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/edit/{id}', [BranchController::class, 'edit'])->name('branches.edit');
         Route::put('/{id}', [BranchController::class, 'update'])->name('branches.update');
         Route::delete('/{id}', [BranchController::class, 'destroy'])->name('branches.destroy');
+
+        Route::get('/statistical-report/{id}', [BranchController::class, 'statisticalReport'])->name('branches.statistical-report');
     });
 
     Route::prefix('committees')->group(function() {

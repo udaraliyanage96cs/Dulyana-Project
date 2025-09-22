@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Branch;
 use App\Models\Zone;
 use App\Models\District;
+use App\Models\Member;
+use App\Models\MemberBranch;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Carbon;
 
 class BranchController extends Controller
 {
@@ -137,5 +141,49 @@ class BranchController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
+    }
+
+    public function statisticalReport($id)
+    {
+        
+        $branch = Branch::with('zone.district')->findOrFail($id);
+
+        $activeMembers = MemberBranch::with('member')
+            ->where('branch_id', $branch->id)
+            ->where('is_current', 'yes')
+            ->get();
+
+
+
+        $activeCount = $activeMembers->count();
+
+        $inTrainingMembers = Member::whereIn('id', function ($query) use ($branch) {
+            $query->select('member_id')
+                ->from('member_branches')
+                ->where('branch_id', $branch->id)
+                ->where('is_current', 'yes');
+        })
+        ->whereHas('memberCourses', function ($query) {
+            $query->where('status', '!=', 'completed');
+        })
+        ->with(['memberCourses.course' => function ($query) {
+            $query->where('status', '!=', 'completed');
+        }])
+        ->get();
+
+
+
+        $inTrainingCount = $inTrainingMembers->count();
+
+        $newMembers = MemberBranch::with('member')
+            ->where('branch_id', $branch->id)
+            ->whereYear('start_date', now()->year)
+            ->get();
+
+        $newCount = $newMembers->count();
+
+        $pdf = Pdf::loadView('reports.branch_statistical_report', compact('branch', 'activeCount', 'inTrainingCount', 'newCount', 'activeMembers', 'inTrainingMembers', 'newMembers'));
+        return $pdf->download('branch_statistical_report_' . $branch->id . '.pdf');
+
     }
 }

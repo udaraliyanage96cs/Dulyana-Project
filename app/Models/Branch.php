@@ -41,6 +41,14 @@ class Branch extends Model
         return $this->hasMany(Committee::class);
     }
 
-    
+    public function memberBranches()
+    {
+        return $this->hasMany(MemberBranch::class);
+    }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
 
 }
