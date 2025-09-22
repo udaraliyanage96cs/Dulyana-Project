@@ -6,6 +6,13 @@
 @section('content')
     <div class="row mb-4">
         <div class="col-12">
+            <div class="d-flex justify-content-end">
+                <div class="mb-3">
+                    <a href="{{ route('courses.education_report') }}" class="btn btn-primary">
+                        Education Report
+                    </a>
+                </div>
+            </div>
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Committee List</h5>

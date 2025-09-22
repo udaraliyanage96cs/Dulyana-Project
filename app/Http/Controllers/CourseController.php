@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Course;
+use App\Models\Member;
+
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Carbon;
 
 class CourseController extends Controller
 {
@@ -110,6 +114,13 @@ class CourseController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
+    }
+
+    public function education_report()
+    {
+        $members = Member::with(['memberCourses.course'])->orderBy('first_name')->orderBy('last_name')->get();
+        $pdf = Pdf::loadView('reports.training_education_report', compact('members'));
+        return $pdf->download('training_education_report.pdf');
     }
 
 }

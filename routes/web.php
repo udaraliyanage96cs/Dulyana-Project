@@ -55,6 +55,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/edit/{id}', [CourseController::class, 'edit'])->name('courses.edit');
         Route::put('/update/{id}', [CourseController::class, 'update'])->name('courses.update');
         Route::delete('/{id}', [CourseController::class, 'destroy'])->name('courses.destroy');
+
+        Route::get('/education_report', [CourseController::class, 'education_report'])->name('courses.education_report');
     });
 
     Route::prefix('events')->group(function() {
