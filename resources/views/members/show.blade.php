@@ -62,6 +62,24 @@
                                             (From: {{ $memberBranch->start_date ? \Carbon\Carbon::parse($memberBranch->start_date)->format('M d, Y') : 'N/A' }} 
                                             To: {{ $memberBranch->end_date ? \Carbon\Carbon::parse($memberBranch->end_date)->format('M d, Y') : 'N/A' }}) 
                                             <strong>{{ $memberBranch->is_current === 'yes' ? 'Current' : '' }}</strong>
+                                            @if($memberBranch->branch->committees->isNotEmpty())
+                                                <ul>
+                                                    @foreach($memberBranch->branch->committees as $committee)
+                                                        @if(!$committee->memberCommittees->isEmpty())
+                                                            <li>Committee: {{ $committee->name }}</li>
+                                                        @endif
+                                                        @foreach($committee->memberCommittees as $memberCommittee)
+                                                            <ul>
+                                                                <li>
+                                                                    Role: {{ $memberCommittee->role_get->name ?? 'N/A' }} 
+                                                                    (From: {{ $memberCommittee->start_date ? \Carbon\Carbon::parse($memberCommittee->start_date)->format('M d, Y') : 'N/A' }} 
+                                                                    To: {{ $memberCommittee->end_date ? \Carbon\Carbon::parse($memberCommittee->end_date)->format('M d, Y') : 'N/A' }})
+                                                                </li>
+                                                            </ul>
+                                                        @endforeach
+                                                    @endforeach
+                                                </ul>
+                                            @endif
                                         </li>
                                     @endforeach
                                 </ul>

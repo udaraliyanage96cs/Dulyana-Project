@@ -29,4 +29,9 @@ class Committee extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function memberCommittees()
+    {
+        return $this->hasMany(MemberCommittee::class);
+    }
 }

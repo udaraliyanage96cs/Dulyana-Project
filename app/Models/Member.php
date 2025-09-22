@@ -31,4 +31,9 @@ class Member extends Model
     {
         return $this->hasMany(MemberBranch::class);
     }
+
+    public function memberCommittees()
+    {
+        return $this->hasMany(MemberCommittee::class);
+    }
 }

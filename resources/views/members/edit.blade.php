@@ -206,7 +206,7 @@
                                     <div>
                                         @foreach ($member->memberBranches as $index => $memberBranch)
                                             <div class="row g-2 course-item mb-3">
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <label class="form-label">Assign Branch</label>
                                                     <select class="form-control"
                                                         name="branches[{{ $index }}][branch_id]" required>
@@ -229,7 +229,6 @@
                                                     <input type="date" name="branches[{{ $index }}][end_date]"
                                                         value="{{ $memberBranch->end_date }}" class="form-control">
                                                 </div>
-
                                                 <div class="col-md-1 d-flex align-items-end justify-content-end">
                                                     <div class="form-check">
                                                         <input class="form-check" type="checkbox" value="yes"
@@ -242,7 +241,8 @@
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-1 d-flex align-items-end justify-content-end">
+                                                <div class="col-md-2 d-flex align-items-end justify-content-end">
+                                                    <a href="{{route('members.committees_role',[$member->id,$memberBranch->branch_id])}}" class="btn btn-info" style="margin-right: 5px">Role</a>
                                                     <a type="button"
                                                         href="{{ route('members.removeBranch', ['memberId' => $member->id, 'branchId' => $memberBranch->id]) }}"
                                                         class="btn btn-danger">Remove</a>
@@ -257,7 +257,7 @@
                                 <div class="mb-3">
                                     <div id="branches-wrapper">
                                         <div class="row g-2 course-item">
-                                            <div class="col-md-4">
+                                            <div class="col-md-3">
                                                 <label class="form-label">Assign Branch</label>
                                                 <select class="form-control"
                                                     name="branches[{{ $nextIndexBranches }}][branch_id]">
@@ -289,7 +289,7 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                            <div class="col-md-1 d-flex align-items-end justify-content-end">
+                                            <div class="col-md-2 d-flex align-items-end justify-content-end">
                                                 <button type="button" class="btn btn-success add-branches">Add</button>
                                             </div>
                                         </div>
@@ -354,7 +354,7 @@
         $(document).on('click', '.add-branches', function() {
             let newBranch = `
                     <div class="row g-2 course-item mt-2">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <select class="form-control" name="branches[${branchIndex}][branch_id]" required>
                                 <option value="" disabled selected>Select branch</option>
                                 @foreach ($branches as $branch)
@@ -376,7 +376,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="col-md-1 d-flex align-items-end justify-content-end">
+                        <div class="col-md-2 d-flex align-items-end justify-content-end">
                             <button type="button" class="btn btn-danger remove-branch"> Remove </button>
                         </div>
                     </div>

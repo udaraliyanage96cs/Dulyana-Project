@@ -26,4 +26,21 @@ class Branch extends Model
         return $this->belongsTo(Zone::class);
     }
 
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updator()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function committees()
+    {
+        return $this->hasMany(Committee::class);
+    }
+
+    
+
 }

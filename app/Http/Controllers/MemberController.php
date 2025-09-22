@@ -9,6 +9,9 @@ use App\Models\MemberCourse;
 use App\Models\MemberBranch;
 use App\Models\Course;
 use App\Models\Branch;
+use App\Models\Committee;
+use App\Models\CommitteeRole;
+use App\Models\MemberCommittee;
 
 class MemberController extends Controller
 {
@@ -248,7 +251,7 @@ class MemberController extends Controller
 
     public function show($id)
     {
-        $member = Member::with('memberCourses.course','memberBranches.branch')->findOrFail($id);
+        $member = Member::with('memberCourses.course','memberBranches.branch.committees.memberCommittees.role_get')->findOrFail($id);
         return view('members.show', compact('member'));
     }
 
@@ -295,5 +298,64 @@ class MemberController extends Controller
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
+
+    public function committees_role($memberId, $branchId)
+    {
+        $member = Member::with('memberCommittees.role_get')->findOrFail($memberId);
+        $branch = Branch::findOrFail($branchId);
+        $committees = Committee::where('status', 'active')->where('branch_id',$branchId)->get();
+        $committee_id = $committees->pluck('id')->all();
+        $committeeRoles = CommitteeRole::get();
+        $memberCommittees = MemberCommittee::where('member_id', $memberId)->whereIn('committee_id',$committee_id)->get();
+        return view('members.committees_role', compact('member', 'branch', 'committeeRoles', 'committees','memberCommittees'));
+    }
+
+    public function committees_role_store(Request $request, $memberId, $branchId)
+    {
+        $member = Member::with('memberCommittees')->findOrFail($memberId);
+        $branch = Branch::findOrFail($branchId);
+
+        $request->validate([
+            'committee_id' => 'required|exists:committees,id',
+            'role' => 'required|string|max:100',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+        ],[
+            'committee_id.required' => 'The committee field is required.',
+            'committee_id.exists' => 'The selected committee is invalid.',
+            'role.required' => 'The role field is required.',
+            'role.string' => 'The role must be a valid string.',
+            'role.max' => 'The role may not be greater than 100 characters.',
+            'start_date.required' => 'The start date field is required.',
+            'start_date.date' => 'The start date must be a valid date.',
+            'end_date.date' => 'The end date must be a valid date.',
+            'end_date.after_or_equal' => 'The end date must be a date after or equal to the start date.',
+        ]);
+
+        try {
+            MemberCommittee::create([
+                'member_id' => $member->id,
+                'committee_id' => $request->committee_id,
+                'role' => $request->role,
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date ?? null,
+                'created_by' => auth()->user()->id
+            ]);
+
+            return redirect()->back()->with('success', 'Committee role assigned to member successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+    }
     
+    public function removeCommittee($committeeId)
+    {
+        $memberCommittee = MemberCommittee::findOrFail($committeeId);
+        try {
+            $memberCommittee->delete();
+            return redirect()->back()->with('success', 'Committee role removed from member successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        }
+    }
 }

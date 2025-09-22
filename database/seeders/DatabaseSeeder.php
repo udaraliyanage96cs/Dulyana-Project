@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call([   
             DistrictsTableSeeder::class,
             ZonesTableSeeder::class,
+            CommitteeRoleSeeder::class,
         ]);
     }
 }

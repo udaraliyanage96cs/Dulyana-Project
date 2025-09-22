@@ -75,5 +75,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/remove-branch/{memberId}/{branchId}', [MemberController::class, 'removeBranch'])->name('members.removeBranch');
         Route::get('/card/{memberId}/{courseId}', [MemberController::class, 'card'])->name('members.card');
         Route::post('/card/{memberId}/{courseId}', [MemberController::class, 'card_update'])->name('members.card_update');
+        Route::get('/committees-role/{memberId}/{branchId}', [MemberController::class, 'committees_role'])->name('members.committees_role');
+        Route::post('/committees-role/{memberId}/{branchId}', [MemberController::class, 'committees_role_store'])->name('members.committees_role_store');
+        Route::delete('/remove-committee/{committeeId}', [MemberController::class, 'removeCommittee'])->name('members.removeCommittee');
+
     });
 });
