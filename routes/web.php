@@ -71,8 +71,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/edit/{id}', [MemberController::class, 'edit'])->name('members.edit');
         Route::put('/update/{id}', [MemberController::class, 'update'])->name('members.update');
         Route::delete('/{id}', [MemberController::class, 'destroy'])->name('members.destroy');
-
+        
         Route::get('/remove-course/{memberId}/{courseId}', [MemberController::class, 'removeCourse'])->name('members.removeCourse');
+        Route::get('/district_directories_report', [MemberController::class, 'district_directories_report'])->name('members.district_directories_report');
         Route::get('/{id}', [MemberController::class, 'show'])->name('members.show');
         Route::get('/remove-branch/{memberId}/{branchId}', [MemberController::class, 'removeBranch'])->name('members.removeBranch');
         Route::get('/card/{memberId}/{courseId}', [MemberController::class, 'card'])->name('members.card');

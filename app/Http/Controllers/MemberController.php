@@ -13,6 +13,7 @@ use App\Models\Committee;
 use App\Models\CommitteeRole;
 use App\Models\MemberCommittee;
 use App\Models\User;
+use App\Models\District;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Carbon;
@@ -443,5 +444,47 @@ class MemberController extends Controller
 
         $pdf = Pdf::loadView('reports.annual_service_report', compact('member', 'courses', 'branches'));
         return $pdf->download('annual_service_report_' . $member->member_id . '.pdf');
+    }
+
+    public function district_directories_report()
+    {
+        $members = Member::with([
+            'memberBranches' => function ($query) {
+                $query->where('is_current', 'yes')->with('branch.zone.district');
+            }
+        ])->get();
+
+        $districts = District::all()->keyBy('id');
+        $districtMembers = collect();
+
+        foreach ($members as $member) {
+            foreach ($member->memberBranches as $mb) {
+                if ($mb->branch && $mb->branch->zone && $mb->branch->zone->district) {
+                    $districtId = $mb->branch->zone->district_id;
+                    $districtMembers->push([
+                        'district_id' => $districtId,
+                        'member_id' => $member->member_id,
+                        'name' => $member->first_name . ' ' . $member->last_name,
+                        'preferred_name' => $member->first_name . ' ' . $member->last_name,
+                        'branch' => $mb->branch->name,
+                        'email' => $member->email,
+                        'phone' => $member->phone ?? 'N/A',
+                    ]);
+                }
+            }
+        }
+
+        $districtMembers = $districtMembers->groupBy('district_id')->map(function ($members, $districtId) use ($districts) {
+            return [
+                'district' => $districts[$districtId] ?? null,
+                'members' => $members->sortBy('name')
+            ];
+        })->filter()->values();
+
+        $currentQuarter = ceil(now()->month / 3);
+        $year = now()->year;
+
+        $pdf = Pdf::loadView('reports.district_directories_report', compact('districtMembers', 'currentQuarter', 'year'));
+        return $pdf->download('district_directory_Q' . $currentQuarter . '_' . $year . '.pdf');
     }
 }
