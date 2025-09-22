@@ -43,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/edit/{id}', [CommitteeController::class, 'edit'])->name('committees.edit');
         Route::put('/{id}', [CommitteeController::class, 'update'])->name('committees.update');
         Route::delete('/{id}', [CommitteeController::class, 'destroy'])->name('committees.destroy');
+
+        Route::get('/committee_service_report', [CommitteeController::class, 'committee_service_report'])->name('committees.committee_service_report');
     });
 
 

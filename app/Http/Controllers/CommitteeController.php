@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Committee;
 use App\Models\Branch;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Carbon;
+
+
 class CommitteeController extends Controller
 {
     public function index()
@@ -104,5 +108,15 @@ class CommitteeController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
+    }
+
+    public function committee_service_report()
+    {
+        $committees = Committee::with(['memberCommittees' => function ($query) {
+            $query->with('member', 'role_get');
+        }])->orderBy('name')->get();
+
+        $pdf = Pdf::loadView('reports.committee_service_report', compact('committees'));
+        return $pdf->download('committee_service_report.pdf');
     }
 }
