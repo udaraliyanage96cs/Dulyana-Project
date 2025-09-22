@@ -64,6 +64,7 @@
                     <div class="mt-3">
                         <table class="table">
                             <thead class="table-dark">
+                                <th>Committee</th>
                                 <th>Role</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
@@ -73,6 +74,7 @@
                             <tbody>
                                 @foreach ($memberCommittees as $committee)
                                     <tr>
+                                        <td>{{ $committee->committee->name }}</td>
                                         <td>{{ $committee->role_get->name }}</td>
                                         <td>{{ $committee->start_date }}</td>
                                         <td>{{ $committee->end_date ?? 'Ongoing' }}</td>

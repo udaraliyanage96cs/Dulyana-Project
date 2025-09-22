@@ -1,4 +1,4 @@
-{{-- resources/views/dashboard.blade.php --}}
+{{-- resources/views/members/show.blade.php --}}
 @extends('layouts.app')
 @section('title', 'Dashboard - ' . config('app.name'))
 @section('page-title', 'Members')
@@ -13,6 +13,9 @@
                     <a href="{{ route('members') }}" class="btn btn-secondary btn-sm">Back to Members List</a>
                 </div>
                 <div class="card-body">
+                    <div class="d-flex justify-content-end mb-3">
+                        <a href="{{route('members.anual_service_report',$member->id)}}" class="btn btn-primary">Anual Service Report</a>
+                    </div>
                     <ul class="list-group">
                         <li class="list-group-item"><strong>Member ID:</strong> {{ $member->member_id }}</li>
                         <li class="list-group-item"><strong>Name:</strong> {{ $member->first_name }} {{ $member->last_name }}</li>
@@ -35,7 +38,7 @@
                                     @foreach($member->memberCourses as $memberCourse)
                                         <li class="mb-3">
                                             <div class="">
-                                                {{ $memberCourse->course->name }} (Enrolled on: {{ $memberCourse->created_at->format('Y-m-d') }}) -
+                                                {{ $memberCourse->course->name }} (Enrolled on: {{ $memberCourse->enrollment_date ? \Carbon\Carbon::parse($memberCourse->enrollment_date)->format('Y-m-d') : 'N/A' }}) -
                                                 {{ $memberCourse->completion_date ? 'Completed on ' . \Carbon\Carbon::parse($memberCourse->completion_date)->format('M d, Y') : 'Not Completed Yet' }}
                                             </div>
                                             @if($memberCourse->status == 'completed')
@@ -62,21 +65,25 @@
                                             (From: {{ $memberBranch->start_date ? \Carbon\Carbon::parse($memberBranch->start_date)->format('M d, Y') : 'N/A' }} 
                                             To: {{ $memberBranch->end_date ? \Carbon\Carbon::parse($memberBranch->end_date)->format('M d, Y') : 'N/A' }}) 
                                             <strong>{{ $memberBranch->is_current === 'yes' ? 'Current' : '' }}</strong>
-                                            @if($memberBranch->branch->committees->isNotEmpty())
+                                            <?php
+                                                $branchCommittees = $member->memberCommittees->filter(function($mc) use($memberBranch) {
+                                                    return $mc->committee && $mc->committee->branch_id === $memberBranch->branch_id;
+                                                })->groupBy('committee_id');
+                                            ?>
+                                            @if($branchCommittees->isNotEmpty())
                                                 <ul>
-                                                    @foreach($memberBranch->branch->committees as $committee)
-                                                        @if(!$committee->memberCommittees->isEmpty())
-                                                            <li>Committee: {{ $committee->name }}</li>
-                                                        @endif
-                                                        @foreach($committee->memberCommittees as $memberCommittee)
-                                                            <ul>
+                                                    @foreach($branchCommittees as $committeeId => $roles)
+                                                        <?php $committee = $roles->first()->committee; ?>
+                                                        <li>Committee: {{ $committee->name }}</li>
+                                                        <ul>
+                                                            @foreach($roles as $role)
                                                                 <li>
-                                                                    Role: {{ $memberCommittee->role_get->name ?? 'N/A' }} 
-                                                                    (From: {{ $memberCommittee->start_date ? \Carbon\Carbon::parse($memberCommittee->start_date)->format('M d, Y') : 'N/A' }} 
-                                                                    To: {{ $memberCommittee->end_date ? \Carbon\Carbon::parse($memberCommittee->end_date)->format('M d, Y') : 'N/A' }})
+                                                                    Role: {{ $role->role_get->name ?? 'N/A' }} 
+                                                                    (From: {{ $role->start_date ? \Carbon\Carbon::parse($role->start_date)->format('M d, Y') : 'N/A' }} 
+                                                                    To: {{ $role->end_date ? \Carbon\Carbon::parse($role->end_date)->format('M d, Y') : 'N/A' }})
                                                                 </li>
-                                                            </ul>
-                                                        @endforeach
+                                                            @endforeach
+                                                        </ul>
                                                     @endforeach
                                                 </ul>
                                             @endif

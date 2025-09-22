@@ -14,6 +14,9 @@ use App\Models\CommitteeRole;
 use App\Models\MemberCommittee;
 use App\Models\User;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Carbon;
+
 class MemberController extends Controller
 {
     public function index(Request $request)
@@ -301,8 +304,25 @@ class MemberController extends Controller
 
     public function show($id)
     {
-        $member = Member::with('memberCourses.course','memberBranches.branch.committees.memberCommittees.role_get')->findOrFail($id);
+        $member = Member::with([
+            'memberCourses.course',
+            'memberBranches.branch',
+            'memberCommittees.committee',
+            'memberCommittees.role_get'
+        ])->findOrFail($id);
         return view('members.show', compact('member'));
+
+        // $member = Member::with([
+        //     'memberCourses.course',
+        //     'memberBranches.branch.zone.district',
+        //     'memberCommittees.committee.branch.zone.district',
+        //     'memberCommittees.role_get'
+        // ])->findOrFail($id);
+
+        // $courses = $member->memberCourses;
+        // $branches = $member->memberBranches;
+
+        // return view('members.show',  compact('member', 'courses', 'branches'));
     }
 
     public function removeBranch($memberId, $branchId)
@@ -407,5 +427,21 @@ class MemberController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
+    }
+
+    public function anual_service_report($id)
+    {
+        $member = Member::with([
+            'memberCourses.course',
+            'memberBranches.branch.zone.district',
+            'memberCommittees.committee.branch.zone.district',
+            'memberCommittees.role_get'
+        ])->findOrFail($id);
+
+        $courses = $member->memberCourses;
+        $branches = $member->memberBranches;
+
+        $pdf = Pdf::loadView('reports.annual_service_report', compact('member', 'courses', 'branches'));
+        return $pdf->download('annual_service_report_' . $member->member_id . '.pdf');
     }
 }

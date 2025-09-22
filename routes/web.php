@@ -79,5 +79,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/committees-role/{memberId}/{branchId}', [MemberController::class, 'committees_role_store'])->name('members.committees_role_store');
         Route::delete('/remove-committee/{committeeId}', [MemberController::class, 'removeCommittee'])->name('members.removeCommittee');
 
+        Route::get('/anual_service_report/{id}', [MemberController::class, 'anual_service_report'])->name('members.anual_service_report');
+
     });
 });
