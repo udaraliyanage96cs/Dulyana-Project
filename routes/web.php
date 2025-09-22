@@ -8,6 +8,7 @@ use App\Http\Controllers\CommitteeController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\DocumentController;
 
 Route::get('/', function () {
     if(auth()->check()) {
@@ -88,5 +89,15 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/anual_service_report/{id}', [MemberController::class, 'anual_service_report'])->name('members.anual_service_report');
 
+    });
+
+    //documents prefix
+    Route::prefix('documents')->group(function() {
+        Route::get('/', [DocumentController::class, 'index'])->name('documents');
+        Route::get('/create', [DocumentController::class, 'create'])->name('documents.create');
+        Route::post('/', [DocumentController::class, 'store'])->name('documents.store');
+        Route::get('/edit/{id}', [DocumentController::class, 'edit'])->name('documents.edit');
+        Route::put('/update/{id}', [DocumentController::class, 'update'])->name('documents.update');
+        Route::delete('/{id}', [DocumentController::class, 'destroy'])->name('documents.destroy');
     });
 });

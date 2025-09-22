@@ -312,6 +312,17 @@
                 </a>
             </div>
 
+
+            <div class="nav-item">
+                <a href="{{ route('documents') }}" class="nav-link {{ request()->routeIs('documents*') ? 'active' : '' }}">
+                    <i class="bi bi-folder2-open"></i>
+                    Documents
+                </a>
+            </div>
+
+
+
+
             
             <hr class="my-3" style="border-color: var(--sidebar-hover);">
             
