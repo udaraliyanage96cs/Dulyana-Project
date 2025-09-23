@@ -39,15 +39,15 @@
                                 value="{{$course->provider}}" required>
                         </div>
                         <div class="mb-3">
-                            <label for="duration_hours" class="form-label">Duration (Hours)</label>
+                            <label for="duration_hours" class="form-label">Duration</label>
                             <input type="number" class="form-control" id="duration_hours" name="duration_hours"
                                 value="{{ $course->duration_hours }}" required>       
                         </div>
-                        <div class="mb-3">
+                        {{-- <div class="mb-3">
                             <label for="color_code" class="form-label">Color Code</label>
                             <input type="text" class="form-control" id="color_code" name="color_code"
                                 value="{{ $course->color_code }}">    
-                        </div>
+                        </div> --}}
                         <div class="mb-3">
                             <label for="status" class="form-label">Status</label>
                             <select class="form-select" id="status" name="status" required>
