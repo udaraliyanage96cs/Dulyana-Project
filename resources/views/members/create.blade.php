@@ -161,19 +161,18 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <label class="form-label" for="date">Start Date</label>
-                                                <input type="date" name="branches[0][start_date]"
-                                                    class="form-control" required>
+                                                <input type="date" name="branches[0][start_date]" class="form-control"
+                                                    required>
                                             </div>
                                             <div class="col-md-2">
                                                 <label class="form-label" for="date">End Date</label>
-                                                <input type="date" name="branches[0][end_date]"
-                                                    class="form-control">
+                                                <input type="date" name="branches[0][end_date]" class="form-control">
                                             </div>
                                             <div class="col-md-3 d-flex align-items-end justify-content-end">
                                                 <div class="">
                                                     <label class="form-label" for="date">Is Current Branch</label>
                                                     <input type="checkbox" name="branches[0][is_current]"
-                                                    class="form-check" >
+                                                        class="form-check">
                                                 </div>
                                             </div>
                                             <div class="col-md-1 d-flex align-items-end justify-content-end">
@@ -184,6 +183,94 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Card Details</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <!-- Blue Card Section -->
+                                    <div class="col-md-6">
+                                        <h6>Blue Card</h6>
+                                        <div class="mb-3">
+                                            <label for="blue_card_available" class="form-label">Blue Card
+                                                Available</label>
+                                            <select class="form-control" id="blue_card_available"
+                                                name="blue_card_available">
+                                                <option value="" selected disabled>Select</option>
+                                                <option value="yes"
+                                                    {{ old('blue_card_available') == 'yes' ? 'selected' : '' }}>Yes
+                                                </option>
+                                                <option value="no"
+                                                    {{ old('blue_card_available') == 'no' ? 'selected' : '' }}>No</option>
+                                            </select>
+                                        </div>
+
+                                        <div id="blue_card_fields" style="display: none;">
+                                            <div class="mb-3">
+                                                <label for="blue_card_number" class="form-label">Blue Card Number</label>
+                                                <input type="number" class="form-control" id="blue_card_number"
+                                                    name="blue_card_number" value="{{ old('blue_card_number') }}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="blue_card_issue" class="form-label">Issue Date</label>
+                                                <input type="date" class="form-control" id="blue_card_issue"
+                                                    name="blue_card_issue" value="{{ old('blue_card_issue') }}"
+                                                    max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="blue_card_expire" class="form-label">Expire Date</label>
+                                                <input type="date" class="form-control" id="blue_card_expire"
+                                                    name="blue_card_expire" value="{{ old('blue_card_expire') }}"
+                                                    min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Yellow Card Section -->
+                                    <div class="col-md-6">
+                                        <h6>Yellow Card</h6>
+                                        <div class="mb-3">
+                                            <label for="yellow_card_available" class="form-label">Yellow Card
+                                                Available</label>
+                                            <select class="form-control" id="yellow_card_available"
+                                                name="yellow_card_available">
+                                                <option value="" selected disabled>Select</option>
+                                                <option value="yes"
+                                                    {{ old('yellow_card_available') == 'yes' ? 'selected' : '' }}>Yes
+                                                </option>
+                                                <option value="no"
+                                                    {{ old('yellow_card_available') == 'no' ? 'selected' : '' }}>No
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div id="yellow_card_fields" style="display: none;">
+                                            <div class="mb-3">
+                                                <label for="yellow_card_number" class="form-label">Yellow Card
+                                                    Number</label>
+                                                <input type="number" class="form-control" id="yellow_card_number"
+                                                    name="yellow_card_number" value="{{ old('yellow_card_number') }}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="yellow_card_issue" class="form-label">Issue Date</label>
+                                                <input type="date" class="form-control" id="yellow_card_issue"
+                                                    name="yellow_card_issue" value="{{ old('yellow_card_issue') }}"
+                                                    max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="yellow_card_expire" class="form-label">Expire Date</label>
+                                                <input type="date" class="form-control" id="yellow_card_expire"
+                                                    name="yellow_card_expire" value="{{ old('yellow_card_expire') }}" 
+                                                    min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
 
                         <div class="d-flex justify-content-end mt-3">
                             <button type="submit" class="btn btn-primary">Create Member</button>
@@ -279,6 +366,29 @@
 
         $(document).on('change', 'input[type="checkbox"]', function() {
             $('input[type="checkbox"]').not(this).prop('checked', false);
+        });
+
+        $(document).ready(function() {
+            function toggleCardFields(selectId, fieldsId) {
+                if ($(selectId).val() === "yes") {
+                    $(fieldsId).show();
+                } else {
+                    $(fieldsId).hide();
+                    $(fieldsId).find("input").val(""); // clear values if hidden
+                }
+            }
+
+            // Initial load
+            toggleCardFields("#blue_card_available", "#blue_card_fields");
+            toggleCardFields("#yellow_card_available", "#yellow_card_fields");
+
+            // On change
+            $("#blue_card_available").on("change", function() {
+                toggleCardFields("#blue_card_available", "#blue_card_fields");
+            });
+            $("#yellow_card_available").on("change", function() {
+                toggleCardFields("#yellow_card_available", "#yellow_card_fields");
+            });
         });
     </script>
 @endpush

@@ -100,6 +100,14 @@ class MemberController extends Controller
             'branches.*.branch_id' => 'required|exists:branches,id',
             'branches.*.start_date' => 'nullable|date',
             'branches.*.end_date' => 'nullable|date|after_or_equal:branches.*.start_date',
+            'blue_card_available' => 'nullable|in:yes,no',
+            'blue_card_number' => 'nullable|string|max:100',
+            'blue_card_issue' => 'nullable|date',
+            'blue_card_expire' => 'nullable|date|after_or_equal:blue_card_issue',
+            'yellow_card_available' => 'nullable|in:yes,no',
+            'yellow_card_number' => 'nullable|string|max:100',
+            'yellow_card_issue' => 'nullable|date',
+            'yellow_card_expire' => 'nullable|date|after_or_equal:yellow_card_issue',
         ],[
             'courses.*.course_id.required' => 'The course field is required.',
             'courses.*.course_id.exists' => 'The selected course is invalid.',
@@ -107,6 +115,7 @@ class MemberController extends Controller
             'courses.*.enrollment_date.date' => 'The enrollment date must be a valid date.',
             'courses.*.completion_date.date' => 'The completion date must be a valid date.',
             'courses.*.completion_date.after_or_equal' => 'The completion date must be a date after or equal to the enrollment date.',
+
             'branches.*.branch_id.required' => 'The branch field is required.',
             'branches.*.branch_id.exists' => 'The selected branch is invalid.',
             'branches.*.start_date.date' => 'The start date must be a valid date.',
@@ -115,7 +124,6 @@ class MemberController extends Controller
         ]);
 
         try {
-
             DB::beginTransaction();
 
             $member = Member::create([
@@ -128,6 +136,14 @@ class MemberController extends Controller
                 'city' => $request->city,
                 'state' => $request->state,
                 'postal_code' => $request->postal_code,
+                'blue_card_available' => $request->blue_card_available,
+                'blue_card_number' => $request->blue_card_number,
+                'blue_card_issue' => $request->blue_card_issue,
+                'blue_card_expire' => $request->blue_card_expire,
+                'yellow_card_available' => $request->yellow_card_available,
+                'yellow_card_number' => $request->yellow_card_number,
+                'yellow_card_issue' => $request->yellow_card_issue,
+                'yellow_card_expire' => $request->yellow_card_expire,
                 'created_by' => auth()->user()->id
             ]);
 
@@ -147,7 +163,7 @@ class MemberController extends Controller
                 }
             }
 
-            if( $request->has('branches')) {
+            if ($request->has('branches')) {
                 foreach ($request->branches as $branchData) {
                     MemberBranch::create([
                         'member_id' => $member->id,
@@ -169,6 +185,7 @@ class MemberController extends Controller
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
     }
+
 
     public function edit($id)
     {
@@ -192,23 +209,39 @@ class MemberController extends Controller
             'city' => 'nullable|string|max:100',
             'state' => 'nullable|string|max:100',
             'postal_code' => 'nullable|string|max:20',
+            'blue_card_available' => 'nullable|in:yes,no',
+            'blue_card_number' => 'nullable|string|max:100',
+            'blue_card_issue' => 'nullable|date',
+            'blue_card_expire' => 'nullable|date|after_or_equal:blue_card_issue',
+            'yellow_card_available' => 'nullable|in:yes,no',
+            'yellow_card_number' => 'nullable|string|max:100',
+            'yellow_card_issue' => 'nullable|date',
+            'yellow_card_expire' => 'nullable|date|after_or_equal:yellow_card_issue',
         ]);
 
         try {
-
             DB::beginTransaction();
 
+            // update member basic details
             $member->update([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'address_line1' => $request->address_line_1,
-                'address_line2' => $request->address_line_2,
-                'city' => $request->city,
-                'state' => $request->state,
-                'postal_code' => $request->postal_code,
-                'updated_by' => auth()->user()->id
+                'first_name'   => $request->first_name,
+                'last_name'    => $request->last_name,
+                'email'        => $request->email,
+                'phone'        => $request->phone,
+                'address_line1'=> $request->address_line_1,
+                'address_line2'=> $request->address_line_2,
+                'city'         => $request->city,
+                'state'        => $request->state,
+                'postal_code'  => $request->postal_code,
+                'blue_card_available' => $request->blue_card_available,
+                'blue_card_number' => $request->blue_card_number,
+                'blue_card_issue' => $request->blue_card_issue,
+                'blue_card_expire' => $request->blue_card_expire,
+                'yellow_card_available' => $request->yellow_card_available,
+                'yellow_card_number' => $request->yellow_card_number,
+                'yellow_card_issue' => $request->yellow_card_issue,
+                'yellow_card_expire' => $request->yellow_card_expire,
+                'updated_by'   => auth()->id(),
             ]);
 
             MemberCourse::where('member_id', $member->id)->delete();
@@ -217,13 +250,6 @@ class MemberController extends Controller
                     'courses.*.course_id' => 'nullable|exists:courses,id',
                     'courses.*.enrollment_date' => 'nullable|date',
                     'courses.*.completion_date' => 'nullable|date|after_or_equal:courses.*.enrollment_date',
-                ],[
-                    'courses.*.course_id.required' => 'The course field is required.',
-                    'courses.*.course_id.exists' => 'The selected course is invalid.',
-                    'courses.*.enrollment_date.required' => 'The enrollment date field is required.',
-                    'courses.*.enrollment_date.date' => 'The enrollment date must be a valid date.',
-                    'courses.*.completion_date.date' => 'The completion date must be a valid date.',
-                    'courses.*.completion_date.after_or_equal' => 'The completion date must be a date after or equal to the enrollment date.',
                 ]);
                 foreach ($request->courses as $courseData) {
                     if (!empty($courseData['course_id']) && !empty($courseData['enrollment_date'])) {
@@ -240,17 +266,11 @@ class MemberController extends Controller
             }
 
             MemberBranch::where('member_id', $member->id)->delete();
-            if( $request->has('branches')) {
+            if ($request->has('branches')) {
                 $request->validate([
                     'branches.*.branch_id' => 'nullable|exists:branches,id',
                     'branches.*.start_date' => 'nullable|date',
                     'branches.*.end_date' => 'nullable|date|after_or_equal:branches.*.start_date',
-                ],[
-                    'branches.*.branch_id.required' => 'The branch field is required.',
-                    'branches.*.branch_id.exists' => 'The selected branch is invalid.',
-                    'branches.*.start_date.date' => 'The start date must be a valid date.',
-                    'branches.*.end_date.date' => 'The end date must be a valid date.',
-                    'branches.*.end_date.after_or_equal' => 'The end date must be a date after or equal to the start date.',
                 ]);
                 foreach ($request->branches as $branchData) {
                     if (!empty($branchData['branch_id'])) {
@@ -258,9 +278,9 @@ class MemberController extends Controller
                             'member_id' => $member->id,
                             'branch_id' => $branchData['branch_id'],
                             'start_date' => $branchData['start_date'] ?? null,
-                            'end_date' => $branchData['end_date'] ?? null,  
-                            'is_current' => isset($branchData['is_current']) ? 'yes' : 'no',
-                            'created_by' => auth()->user()->id
+                            'end_date'   => $branchData['end_date'] ?? null,  
+                            'is_current'=> isset($branchData['is_current']) ? 'yes' : 'no',
+                            'created_by'=> auth()->id(),
                         ]);
                     }
                 }
@@ -272,8 +292,8 @@ class MemberController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', 'Something went wrong: ' . $e->getMessage());
         }
-        
     }
+
 
     public function destroy($id)
     {
@@ -311,19 +331,8 @@ class MemberController extends Controller
             'memberCommittees.committee',
             'memberCommittees.role_get'
         ])->findOrFail($id);
+
         return view('members.show', compact('member'));
-
-        // $member = Member::with([
-        //     'memberCourses.course',
-        //     'memberBranches.branch.zone.district',
-        //     'memberCommittees.committee.branch.zone.district',
-        //     'memberCommittees.role_get'
-        // ])->findOrFail($id);
-
-        // $courses = $member->memberCourses;
-        // $branches = $member->memberBranches;
-
-        // return view('members.show',  compact('member', 'courses', 'branches'));
     }
 
     public function removeBranch($memberId, $branchId)

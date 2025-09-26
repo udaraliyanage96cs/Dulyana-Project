@@ -151,7 +151,6 @@
                         <table class="table table-hover">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>#</th>
                                     <th>
                                         Member ID
                                     </th>
@@ -171,7 +170,6 @@
                             <tbody>
                                 @forelse ($members as $member)
                                     <tr>
-                                        <td>{{ $member->id }}</td>
                                         <td>
                                             <span class="badge bg-secondary">{{ $member->member_id }}</span>
                                         </td>

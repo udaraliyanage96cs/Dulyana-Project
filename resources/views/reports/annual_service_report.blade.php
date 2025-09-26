@@ -23,7 +23,24 @@
         <p><strong>Phone:</strong> {{ $member->phone }}</p>
         <p><strong>Address:</strong> <span class="address">{{ $member->address_line1 }}, {{ $member->address_line2 }}, {{ $member->city }}, {{ $member->state }} {{ $member->postal_code }}</span></p>
     </div>
-    
+
+     @if ($member->blue_card_available == 'yes')
+        <div class="member-info">
+            <strong>Blue Card Details : </strong>
+            <p>Card Number : {{ $member->blue_card_number ?? 'N/A' }}</p>
+            <p>Issue Date: {{ $member->blue_card_issue ? \Carbon\Carbon::parse($member->blue_card_issue)->format('M d, Y') : 'N/A' }}</p>
+            <p>Expiry Date: {{ $member->blue_card_expire ? \Carbon\Carbon::parse($member->blue_card_expire)->format('M d, Y') : 'N/A' }}</p>
+        </div>
+    @endif
+    @if ($member->yellow_card_available == 'yes')
+        <div class="member-info">
+            <strong>Yellow Card Details : </strong>
+            <p>Card Number : {{ $member->yellow_card_number ?? 'N/A' }}</p>
+            <p>Issue Date: {{ $member->yellow_card_issue ? \Carbon\Carbon::parse($member->yellow_card_issue)->format('M d, Y') : 'N/A' }}</p>
+            <p>Expiry Date: {{ $member->yellow_card_expire ? \Carbon\Carbon::parse($member->yellow_card_expire)->format('M d, Y') : 'N/A' }}</p>
+        </div>
+    @endif
+
     <h2>Assigned Courses</h2>
     @if($courses->isNotEmpty())
         <table>
@@ -32,9 +49,6 @@
                     <th>Course Name</th>
                     <th>Enrolled On</th>
                     <th>Completed On</th>
-                    <th>Card Number</th>
-                    <th>Issue Date</th>
-                    <th>Expiry Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,9 +57,6 @@
                         <td>{{ $mc->course->name }}</td>
                         <td>{{ $mc->enrollment_date ?? 'N/A' }}</td>
                         <td>{{ $mc->completion_date ?? 'N/A' }}</td>
-                        <td>{{ $mc->card_number ?? 'N/A' }}</td>
-                        <td>{{ $mc->issue_date ?? 'N/A' }}</td>
-                        <td>{{ $mc->expiry_date ?? 'N/A' }}</td>
                     </tr>
                 @endforeach
             </tbody>

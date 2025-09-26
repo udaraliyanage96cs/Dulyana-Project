@@ -115,8 +115,6 @@
                                 <div class="mb-3">
                                     <div>
                                         @foreach ($member->memberCourses as $index => $memberCourse)
-                                        
-
                                             <div class="row g-2 course-item mb-3">
                                                 <div class="col-md-4">
                                                     <label class="form-label">Assign Course</label>
@@ -145,10 +143,6 @@
                                                         class="form-control">
                                                 </div>
                                                 <div class="col-md-2 d-flex align-items-end justify-content-end">
-                                                    @if($memberCourse->completion_date)
-                                                        <a href="{{route('members.card',[$member->id,$memberCourse->id])}}" class="btn btn-info" style="margin-right: 5px">Card
-                                                        </a>
-                                                    @endif
                                                     <a type="button"
                                                         href="{{ route('members.removeCourse', ['memberId' => $member->id, 'courseId' => $memberCourse->id]) }}"
                                                         class="btn btn-danger">Remove</a>
@@ -242,7 +236,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2 d-flex align-items-end justify-content-end">
-                                                    <a href="{{route('members.committees_role',[$member->id,$memberBranch->branch_id])}}" class="btn btn-info" style="margin-right: 5px">Role</a>
+                                                    <a href="{{ route('members.committees_role', [$member->id, $memberBranch->branch_id]) }}"
+                                                        class="btn btn-info" style="margin-right: 5px">Role</a>
                                                     <a type="button"
                                                         href="{{ route('members.removeBranch', ['memberId' => $member->id, 'branchId' => $memberBranch->id]) }}"
                                                         class="btn btn-danger">Remove</a>
@@ -297,6 +292,86 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Card Details</h6>
+                            </div>
+                            <div class="card-body">
+                                {{-- Blue Card --}}
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Blue Card Available</label>
+                                        <select name="blue_card_available" id="blue_card_available" class="form-control">
+                                            <option value="">Select</option>
+                                            <option value="yes"
+                                                {{ $member->blue_card_available === 'yes' ? 'selected' : '' }}>Yes</option>
+                                            <option value="no"
+                                                {{ $member->blue_card_available === 'no' ? 'selected' : '' }}>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="blue_card_details"
+                                    style="display: {{ $member->blue_card_available === 'yes' ? 'block' : 'none' }}">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Blue Card Number</label>
+                                            <input type="number" class="form-control" name="blue_card_number"
+                                                value="{{ $member->blue_card_number }}">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Issue Date</label>
+                                            <input type="date" class="form-control" name="blue_card_issue"
+                                                value="{{ $member->blue_card_issue }}" max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Expire Date</label>
+                                            <input type="date" class="form-control" name="blue_card_expire"
+                                                value="{{ $member->blue_card_expire }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}"> 
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Yellow Card --}}
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Yellow Card Available</label>
+                                        <select name="yellow_card_available" id="yellow_card_available"
+                                            class="form-control">
+                                            <option value="">Select</option>
+                                            <option value="yes"
+                                                {{ $member->yellow_card_available === 'yes' ? 'selected' : '' }}>Yes
+                                            </option>
+                                            <option value="no"
+                                                {{ $member->yellow_card_available === 'no' ? 'selected' : '' }}>No</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="yellow_card_details"
+                                    style="display: {{ $member->yellow_card_available === 'yes' ? 'block' : 'none' }}">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label">Yellow Card Number</label>
+                                            <input type="number" class="form-control" name="yellow_card_number"
+                                                value="{{ $member->yellow_card_number }}">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Issue Date</label>
+                                            <input type="date" class="form-control" name="yellow_card_issue"
+                                                value="{{ $member->yellow_card_issue }}" max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Expire Date</label>
+                                            <input type="date" class="form-control" name="yellow_card_expire"
+                                                value="{{ $member->yellow_card_expire }}" min="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
 
                         <div class="d-flex justify-content-end mt-3">
                             <button type="submit" class="btn btn-primary">Update Member</button>
@@ -395,6 +470,24 @@
 
         $(document).on('change', 'input[type="checkbox"]', function() {
             $('input[type="checkbox"]').not(this).prop('checked', false);
+        });
+
+        $(document).ready(function() {
+            $('#blue_card_available').on('change', function() {
+                if ($(this).val() === 'yes') {
+                    $('#blue_card_details').show();
+                } else {
+                    $('#blue_card_details').hide();
+                }
+            });
+
+            $('#yellow_card_available').on('change', function() {
+                if ($(this).val() === 'yes') {
+                    $('#yellow_card_details').show();
+                } else {
+                    $('#yellow_card_details').hide();
+                }
+            });
         });
     </script>
 @endpush
