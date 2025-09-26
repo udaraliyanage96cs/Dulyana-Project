@@ -108,7 +108,7 @@
 
                         <div class="card  mt-3">
                             <div class="card-header">
-                                <h6 class="mb-0">Course Assignments</h6>
+                                <h6 class="mb-0">Course / Traning Assignments</h6>
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
